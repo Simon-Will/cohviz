@@ -1,45 +1,26 @@
-FROM python:2.7
+FROM python:2.7-buster
 
-# Non-executed command of images' author
 MAINTAINER Christian Burkhart
 
-# Set environment variable
-ENV PYTHONUNBUFFERED 1
+# Import public key for mongodb and install packages
+RUN apt-get update -y && apt-get install -y wget gnupg \
+	    && wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - \
+	    && echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list \
+	    && apt-get update -y \
+	    && apt-get install -y vim mongodb-org npm gulp python-enchant \
+	    && pip install -U wheel setuptools
 
-# Make new directory
-RUN mkdir /code
-
-# Set /code as working directory
-# CMD is executed here
 WORKDIR /code
-
 ENV HOME /code
-
-# Import Public key for mong
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
-RUN echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" | tee /etc/apt/sources.list.d/mongodb-org-3.4.list
-
-# Install packages
-RUN apt-get update -y
-RUN apt-get install vim -y
-RUN apt-get install python-enchant -y
-RUN apt-get install -y python-pip
-RUN apt-get install mongodb-org -y
-
-# Add python package list to code dir
-ADD requirements.txt /code/
-
-# Add content of local machine directory
-# to /code directory
 ADD . /code/
 
 # Install python packages
 RUN pip install -r requirements.txt
 
-# Install npm packages
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-RUN apt-get install -y nodejs
+RUN python -m spacy download en_core_web_sm \
+	    && python -m spacy download de_core_news_md \
+	    && python -c 'import nltk; nltk.download()'
 
-# Gulp files
-CMD ["gulp", "sass"]
-CMD ["gulp", "webpack"]
+RUN python manage.py migrate \
+	    && python manage.py collectstatic
+CMD ["gunicorn", "toolapp.wsgi:application", "-w", "1", "-t", "120", "-b", ":8000", "--reload"]

@@ -14,3 +14,4 @@ pyenchant
 more-itertools
 repoze.lru
 langdetect
+spacy

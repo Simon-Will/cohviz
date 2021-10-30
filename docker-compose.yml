@@ -1,35 +1,29 @@
-version: '2'
+version: '3.7'
 services:
-  # My web application running django and gunicorn
+  # Cohviz web application
   web:
-    restart: always
     build: ./web
-    expose:
-      - "8000"
-    links:
-      - "postgres:postgres"
+    ports:
+      - '8000:8000'
     env_file: .env
     volumes:
-      - ./web:/code
-      - ./web/static:/usr/src/app/static
-    command: /usr/local/bin/gunicorn toolapp.wsgi:application -w 1 -t 120 -b :8000 --reload
+      - ./GN_V110_XML:/code/cohapp/coherenceanalyzer/GN_V110_XML
   # The web server
-  nginx:
-    restart: always
-    build: ./nginx/
-    ports:
-      - "8080:80"
-    volumes:
-      - /www/static
-    volumes_from:
-      - web
-    links:
-      - "web:web"
+  #nginx:
+  #  restart: always
+  #  build: ./nginx/
+  #  ports:
+  #    - "8080:80"
+  #  volumes:
+  #    - /www/static
+  #  volumes_from:
+  #    - web
+  #  links:
+  #    - "web:web"
   # The database
   postgres:
-    restart: always
-    build: ./postgres
-    ports:
-      - "5432:5432"
+    image: postgres:14.0
     volumes:
       - ./postgres/data:/var/lib/postgrsql/data
+    environment:
+      POSTGRES_PASSWORD: iePh1phahY7aiteengoh
