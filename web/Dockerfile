@@ -8,7 +8,7 @@ RUN apt-get update -y && apt-get install -y wget gnupg \
 	    && echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list \
 	    && apt-get update -y \
 	    && apt-get install -y vim mongodb-org npm gulp python-enchant \
-	    && pip install -U wheel setuptools
+	    && pip install -U wheel setuptools pip
 
 WORKDIR /code
 ENV HOME /code
@@ -21,6 +21,6 @@ RUN python -m spacy download en_core_web_sm \
 	    && python -m spacy download de_core_news_md \
 	    && python -c 'import nltk; nltk.download()'
 
-RUN python manage.py migrate \
-	    && python manage.py collectstatic
+RUN python manage.py migrate && python manage.py collectstatic
+
 CMD ["gunicorn", "toolapp.wsgi:application", "-w", "1", "-t", "120", "-b", ":8000", "--reload"]
