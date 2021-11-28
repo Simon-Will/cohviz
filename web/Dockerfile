@@ -10,17 +10,15 @@ RUN apt-get update -y && apt-get install -y wget gnupg \
 	    && apt-get install -y vim mongodb-org npm gulp python-enchant \
 	    && pip install -U wheel setuptools pip
 
+COPY requirements.txt /code/requirements.txt
 WORKDIR /code
 ENV HOME /code
-ADD . /code/
-
-# Install python packages
 RUN pip install -r requirements.txt
 
-RUN python -m spacy download en_core_web_sm \
-	    && python -m spacy download de_core_news_md \
-	    && python -c 'import nltk; nltk.download()'
+RUN python -m spacy download en_core_web_md \
+	    && python -m spacy download de_core_news_md
 
-RUN python manage.py migrate && python manage.py collectstatic
+ADD . /code/
 
+ENTRYPOINT ["bash", "prepare_app_and_execute.sh"]
 CMD ["gunicorn", "toolapp.wsgi:application", "-w", "1", "-t", "120", "-b", ":8000", "--reload"]

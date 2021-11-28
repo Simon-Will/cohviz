@@ -7,23 +7,22 @@ services:
       - '8000:8000'
     env_file: .env
     volumes:
-      - ./GN_V110_XML:/code/cohapp/coherenceanalyzer/GN_V110_XML
-  # The web server
-  #nginx:
-  #  restart: always
-  #  build: ./nginx/
-  #  ports:
-  #    - "8080:80"
-  #  volumes:
-  #    - /www/static
-  #  volumes_from:
-  #    - web
-  #  links:
-  #    - "web:web"
-  # The database
+      - './GN_V110_XML:/code/cohapp/coherenceanalyzer/GN_V110_XML:ro'
+      - 'static:/code/static:rw'
+  # Web server
+  nginx:
+    image: nginx:1.21
+    ports:
+      - '8080:80'
+    volumes:
+      - './nginx/conf.d:/etc/nginx/conf.d:ro'
+      - 'static:/www/static:ro'
+  # Database
   postgres:
     image: postgres:14.0
     volumes:
-      - ./postgres/data:/var/lib/postgrsql/data
+      - './postgres/data:/var/lib/postgresql/data'
     environment:
       POSTGRES_PASSWORD: iePh1phahY7aiteengoh
+volumes:
+  static:
