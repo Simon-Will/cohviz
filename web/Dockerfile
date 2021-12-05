@@ -16,6 +16,8 @@ RUN pip install -r /code/requirements.txt
 RUN python -m spacy download en_core_web_md \
 	&& python -m spacy download de_core_news_md
 
+RUN python -c "import nltk; nltk.download('wordnet', download_dir='/usr/local/nltk_data')"
+
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
 	&& apt-get install nodejs=6.14.4-1nodesource1 \
 	&& npm install --global gulp-cli \

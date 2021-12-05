@@ -55,7 +55,7 @@ ROOT_URLCONF = 'toolapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,8 +68,6 @@ TEMPLATES = [
         },
     },
 ]
-
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 WSGI_APPLICATION = 'toolapp.wsgi.application'
 
@@ -88,6 +86,38 @@ DATABASES = {
      }
 }
 
+# Logging
+# https://docs.djangoproject.com/en/1.8/topics/logging/
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'base': {
+            'format': '[%(asctime)s] %(module)s - %(levelname)s | %(message)s',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'cohviz.log'),
+            'formatter': 'base',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'base',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
