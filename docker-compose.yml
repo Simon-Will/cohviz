@@ -9,6 +9,7 @@ services:
     volumes:
       - './GN_V110_XML:/code/cohapp/coherenceanalyzer/GN_V110_XML:ro'
       - 'static:/code/static:rw'
+      - './cohviz.log:/code/cohviz.log:rw'
   # Web server
   nginx:
     image: nginx:1.21
