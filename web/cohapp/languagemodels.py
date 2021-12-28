@@ -1,6 +1,6 @@
 # encoding: utf-8
 import spacy
-from coherenceanalyzer.analyzerenglish import CohesionAnalyzerEnglish
+from .coherenceanalyzer.analyzerenglish import CohesionAnalyzerEnglish
 
 
 # Load language models

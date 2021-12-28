@@ -124,7 +124,7 @@ class Subject(models.Model):
         subjects = Subject.objects.filter(experiment=self.experiment)
 
         # Get groups
-        rangeGroups = range(1, self.experiment.nr_groups + 1)
+        rangeGroups = list(range(1, self.experiment.nr_groups + 1))
 
         # Init empty dict
         myDict = {}

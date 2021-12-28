@@ -59,8 +59,7 @@ class CohesionAnalyzerEnglish:
         # Loop over every sentence
         for index, sentence in enumerate(sentences):
             # Get noun chunks
-            noun_chunks = filter(lambda x: x.root.prob < -7,
-                list(sentence.noun_chunks))
+            noun_chunks = [x for x in list(sentence.noun_chunks) if x.root.prob < -7]
 
             nouns = [noun for noun in sentence if noun.pos_ in ['NOUN', 'PROPN']]
 
@@ -85,13 +84,15 @@ class CohesionAnalyzerEnglish:
                     word_to_lemma[word.orth_] = word.lemma_
 
             # Get subjects
-            subjects_cur = list(set([s for s in nouns
-                if s.dep_ in ['nsubj', 'csubj', 'nsubjpass', 'ROOT']]))
+            subjects_cur = list({
+                s for s in nouns if s.dep_ in {'nsubj', 'csubj', 'nsubjpass', 'ROOT'}
+            })
             subjects += subjects_cur
 
             # Get objects
-            objects_cur = [o for o in nouns
-                if o.dep_ in ['dobj', 'obj', 'iobj', 'pobj', 'attr', 'conj']]
+            objects_cur = [
+                o for o in nouns if o.dep_ in {'dobj', 'obj', 'iobj', 'pobj', 'attr', 'conj'}
+            ]
             objects += objects_cur
 
             # There are multiple of both
@@ -144,7 +145,7 @@ class CohesionAnalyzerEnglish:
                     for comb in my_combinations]
 
                 # We are only interested in pairs with a high similarity
-                similarity_filter = filter(lambda x: x[2] > .59, similarity_pairs)
+                similarity_filter = [x for x in similarity_pairs if x[2] > .59]
 
                 # We have found chunks that are similar
                 if len(similarity_filter) > 0:
@@ -255,8 +256,8 @@ class CohesionAnalyzerEnglish:
                                     word_pairs[num_again]['target']]
 
                             # Lemmas in current cluster
-                            current_cluster_lemma_source = map(lambda x: x['source'], current_cluster)
-                            current_cluster_lemma_target = map(lambda x: x['target'], current_cluster)
+                            current_cluster_lemma_source = [x['source'] for x in current_cluster]
+                            current_cluster_lemma_target = [x['target'] for x in current_cluster]
 
                             # Get all words in current cluster
                             current_cluster_lemma = current_cluster_lemma_source + \
@@ -306,8 +307,8 @@ class CohesionAnalyzerEnglish:
         # Loop over every cluster
         for index, single_cluster in enumerate(cluster):
             # Get words for current cluster
-            source_words = map(lambda x: x['source'], single_cluster)
-            target_words = map(lambda x: x['target'], single_cluster)
+            source_words = [x['source'] for x in single_cluster]
+            target_words = [x['target'] for x in single_cluster]
 
             # Concatenate sources and targets in to one array
             words = source_words + target_words
@@ -432,11 +433,14 @@ class CohesionAnalyzerEnglish:
         """Calculates the number of relations"""
 
         # Make tuples from word_pairs
-        tuples = map(lambda x: (x['source'], x['target']), word_pairs)
+        tuples = [(x['source'], x['target']) for x in word_pairs]
 
         # Remove duplicates
-        tuples = list(set([(pair[0], pair[1])
-            for pair in tuples if pair[0] != pair[1]]))
+        tuples = list({
+            pair
+            for pair in tuples
+            if pair[0] != pair[1]
+        })
 
         return len(tuples)
 
@@ -455,8 +459,9 @@ class CohesionAnalyzerEnglish:
         """
 
         # Get all connections also within sentences
-        connections = list(set(map(lambda x: (x['sentence_source'],
-            x['sentence_target']), word_pairs)))
+        connections = list({
+            (x['sentence_source'], x['sentence_target']) for x in word_pairs
+        })
 
         # Loop over every sentence
         # We need to count the sentences that overlap by argument
@@ -474,13 +479,13 @@ class CohesionAnalyzerEnglish:
                     connections.append((val + 1, val + 2))
 
         # Get all connections between sentences
-        connections_between = list(set(filter(lambda x: x[0] != x[1], connections)))
+        connections_between = list({x for x in connections if x[0] != x[1]})
 
         # If we only have one sentence there is no point in calculating
         # local cohesion. Check if zero division error occurs
         try:
             # Return local cohesion
-            local_cohesion = float(len(connections_between)) / (len(sentences) - 1)
+            local_cohesion = len(connections_between) / (len(sentences) - 1)
         except ZeroDivisionError:
             return {'local_cohesion': None,
                     'cohSentences': None,
@@ -520,12 +525,14 @@ class CohesionAnalyzerEnglish:
         local_cohesion = self.calc_local_cohesion(word_pairs, sentences)
 
         # All concepts
-        concepts = list(set([pair['source'] for pair in word_pairs] +
-                       [pair['target'] for pair in word_pairs]))
+        concepts = list(set.union(
+            {pair['source'] for pair in word_pairs},
+            {pair['target'] for pair in word_pairs}
+        ))
 
         # Get unique nodes
-        nodes = map(lambda x: [x['source'], x['target']], word_pairs)
-        nodes_list = list(set(list(chain(*nodes))))
+        nodes = [[x['source'], x['target']] for x in word_pairs]
+        nodes_list = list(set(chain(*nodes)))
         nodes_dict = [{'id': word, 'index': ind} for ind, word, in enumerate(nodes_list)]
 
         # Generate html string

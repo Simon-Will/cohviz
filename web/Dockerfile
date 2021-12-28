@@ -1,4 +1,4 @@
-FROM python:2.7-buster
+FROM python:3.6-buster
 
 MAINTAINER Christian Burkhart
 
@@ -17,7 +17,7 @@ RUN python -m spacy download en_core_web_md \
 	&& python -m spacy download de_core_news_md
 
 RUN python -c "import nltk; nltk.download('wordnet', download_dir='/usr/local/nltk_data')" \
-	    && python -c "import nltk; nltk.download('punkt', download_dir='/usr/local/nltk_data')"
+	&& python -c "import nltk; nltk.download('punkt', download_dir='/usr/local/nltk_data')"
 
 COPY package.json package-lock.json /code/
 WORKDIR /code

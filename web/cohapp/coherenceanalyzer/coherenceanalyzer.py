@@ -2,7 +2,7 @@
 
 import os
 import re
-import constants
+from . import constants
 import subprocess
 from pandas import DataFrame
 import numpy as np
@@ -25,9 +25,12 @@ def getPOSElement(element, regex, tags):
     Returns:
         Array of text elements
     """
-
-    return [dict(tag.items() + {element: bool(re.match(regex,
-        tag['pos']))}.items()) for tag in tags]
+    new_tags = []
+    for tag in tags:
+        new_tag = tag.copy()
+        new_tag.update({element: bool(re.match(regex, tag['pos']))})
+        new_tags.append(new_tag)
+    return new_tags
 
 
 def getHypoHyperPairs(sentences, gn):
@@ -72,7 +75,7 @@ def getHypoHyperPairs(sentences, gn):
                         if wordThis['noun']]
 
                     # Get nouns of next sentence in array
-                    nouns_next_sentence = map(lambda x: x['lemma'], words_next_sentence)
+                    nouns_next_sentence = [x['lemma'] for x in words_next_sentence]
 
                     # Find common elements in hypos and next sentence
                     intersections_hypo = list(set(hypos).intersection(nouns_next_sentence))
@@ -84,8 +87,9 @@ def getHypoHyperPairs(sentences, gn):
                     for intersection in intersections_hypo:
                         if intersection != word['orth']:
                             # Get full target word of intersection
-                            targetWord = filter(lambda x: x['lemma']
-                                == intersection, words_next_sentence)[0]
+                            targetWord = [
+                                x for x in words_next_sentence if x['lemma'] == intersection
+                            ][0]
 
                             # Append
                             wordPairs.append({'source': {'word': word['orth'],
@@ -98,8 +102,9 @@ def getHypoHyperPairs(sentences, gn):
                     for intersection in intersections_hyper:
                         if intersection != word['orth']:
                             # Get full target word of intersection
-                            targetWord = filter(lambda x: x['lemma']
-                                == intersection, words_next_sentence)[0]
+                            targetWord = [
+                                x for x in words_next_sentence if x['lemma'] == intersection
+                            ][0]
 
                             # Append
                             wordPairs.append({'source': {'word': word['orth'],
@@ -168,8 +173,8 @@ def get_clusters(word_pairs, sentences):
                                  word_pairs[num_again]['target']['lemma']]
 
                         # Lemmas in current cluster
-                        current_cluster_lemma_source = map(lambda x: x['source']['lemma'], current_cluster)
-                        current_cluster_lemma_target = map(lambda x: x['target']['lemma'], current_cluster)
+                        current_cluster_lemma_source = [x['source']['lemma'] for x in current_cluster]
+                        current_cluster_lemma_target = [x['target']['lemma'] for x in current_cluster]
 
                         # Get all words in current cluster
                         current_cluster_lemma = current_cluster_lemma_source + \
@@ -254,10 +259,8 @@ def get_compounds(sentences):
                     # in a sentence that doesn't exist.
                     if val != (len(sentences) - 1):
                         # Get nouns and words of next sentence
-                        words_next_sentence = filter(lambda x: x['noun'],
-                                sentences[val + 1])
-                        nouns_next_sentence = map(lambda x: x['lemma'],
-                                words_next_sentence)
+                        words_next_sentence = [x for x in sentences[val + 1] if x['noun']]
+                        nouns_next_sentence = [x['lemma'] for x in words_next_sentence]
 
                         # Head is in next sentence
                         if head in nouns_next_sentence:
@@ -279,10 +282,8 @@ def get_compounds(sentences):
                         # nouns_previous_sentence = [wordNext['lemma']
                         #     for wordNext in sentences[val - 1]
                         #         if wordNext['noun']]
-                        words_previous_sentence = filter(lambda x: x['noun'],
-                                sentences[val - 1])
-                        nouns_previous_sentence = map(lambda x: x['lemma'],
-                                words_previous_sentence)
+                        words_previous_sentence = [x for x in sentences[val - 1] if x['noun']]
+                        nouns_previous_sentence = [x['lemma'] for x in words_previous_sentence]
 
                         # Head occurs in previous sentence
                         if head in nouns_previous_sentence:
@@ -320,8 +321,7 @@ def get_stem_relations(sentences, gn):
         # sentence? If so carry on
         if val != (len(sentences) - 1):
             # Get stems of all words in current sentence
-            stems_next_sentence = map(lambda x: stemmer.stem(x['lemma']),
-                sentences[val + 1])
+            stems_next_sentence = [stemmer.stem(x['lemma']) for x in sentences[val + 1]]
 
             # Nouns in next sentence
             nouns_next_sentence = [word['lemma'] for word in sentences[val + 1]
@@ -404,11 +404,9 @@ def get_coreferences(sentences, gn):
         if val != (len(sentences) - 1):
 
             # Get nouns and pronouns of current and next sentence
-            current_sentence = filter(lambda x: x['noun'], sentence)
-            nouns_next_sentence = filter(lambda x: x['noun'],
-                                    sentences[val + 1])
-            pronouns_next_sentence = filter(lambda x: x['pronoun'],
-                                    sentences[val + 1])
+            current_sentence = [x for x in sentence if x['noun']]
+            nouns_next_sentence = [x for x in sentences[val + 1] if x['noun']]
+            pronouns_next_sentence = [x for x in sentences[val + 1] if x['pronoun']]
 
             # Loop over every pronoun in next sentence
             for pronoun in pronouns_next_sentence:
@@ -462,8 +460,9 @@ def calc_local_cohesion(word_pairs, sentences):
     """
 
     # Get all connections also within sentences
-    connections = list(set(map(lambda x: (x['source']['sentence'],
-        x['target']['sentence']), word_pairs)))
+    connections = list({
+        (x['source']['sentence'], x['target']['sentence']) for x in word_pairs
+    })
 
     # Loop over every sentence
     # We need to count the sentences that overlap by argument
@@ -482,13 +481,13 @@ def calc_local_cohesion(word_pairs, sentences):
                 connections.append((val, val + 1))
 
     # Get all connections between sentences
-    connections_between = list(set(filter(lambda x: x[0] != x[1], connections)))
+    connections_between = list({x for x in connections if x[0] != x[1]})
 
     # If we only have one sentence there is no point in calculating
     # local cohesion. Check if zero division error occurs
     try:
         # Return local cohesion
-        local_cohesion = float(len(connections_between)) / (len(sentences) - 1)
+        local_cohesion = len(connections_between) / (len(sentences) - 1)
     except ZeroDivisionError:
         return {'local_cohesion': None,
                 'cohSentences': None,
@@ -732,7 +731,7 @@ def analyzeTextCohesion(text):
     ############################################################################
     # Save text to file
     f = open(constants.temp_text, 'w')
-    f.write(text.encode('utf-8'))
+    f.write(text)
     f.close()
 
     # Tokenize
@@ -762,7 +761,7 @@ def analyzeTextCohesion(text):
     tags.pop()
 
     # Remove \n from end of tag
-    tags = [[tag[0].decode('utf-8'), tag[1][:-1]] for tag in tags]
+    tags = [[tag[0], tag[1][:-1]] for tag in tags]
 
     ############################################################################
     # Further processing
@@ -800,7 +799,7 @@ def analyzeTextCohesion(text):
 
     for word in tags:
         if word['pos'] != 'SYM.Pun.Sent':
-                sentenceArray.append(word)
+            sentenceArray.append(word)
         else:
             sentences.append(sentenceArray)
             sentenceArray = []
@@ -817,7 +816,7 @@ def analyzeTextCohesion(text):
         # Get all nouns
         nouns = [word['lemma'] for word in sentence if word['noun']]
         nouns_full = [word for word in sentence if word['noun']]
-        nominatives = filter(lambda x: x['nominative'], sentence)
+        nominatives = [x for x in sentence if x['nominative']]
 
         # There is only one noun in the current sentence
         if len(nouns) == 1:
@@ -914,7 +913,7 @@ def analyzeTextCohesion(text):
     # Calculate number of relations
     ######################################
 
-    word_tuples = map(lambda x: (x['source']['lemma'], x['target']['lemma']), word_pairs)
+    word_tuples = [(x['source']['lemma'], x['target']['lemma']) for x in word_pairs]
     word_tuples = list(set([(pair['source']['lemma'], pair['target']['lemma'])
         for pair in word_pairs if pair['source']['lemma'] != pair['target']['lemma']]))
 
@@ -932,8 +931,8 @@ def analyzeTextCohesion(text):
     word_cluster_index = {}
     for index, single_cluster in enumerate(cluster):
         # Get words for current cluster
-        source_words = map(lambda x: x['source']['lemma'], single_cluster)
-        target_words = map(lambda x: x['target']['lemma'], single_cluster)
+        source_words = [x['source']['lemma'] for x in single_cluster]
+        target_words = [x['target']['lemma'] for x in single_cluster]
 
         # Concatenate sources and targets in to one array
         words = source_words + target_words
