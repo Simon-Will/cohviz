@@ -1,11 +1,10 @@
 # encoding: utf-8
 
 from nltk.corpus import wordnet as wn
-from itertools import combinations, permutations, chain, repeat, product
+from itertools import combinations, chain, product
 from collections import Counter
 import re
-import spacy
-import time
+
 
 class CohesionAnalyzerEnglish:
 

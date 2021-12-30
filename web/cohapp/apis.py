@@ -571,7 +571,7 @@ class TextAnalyzer(APIView):
             elif text_language == 'de':
                 print('**** German *****')
                 # Analyze german text
-                results = analyzer = analyzeTextCohesion(text)
+                results = analyzeTextCohesion(text)
             else:
                 return JsonResponse({}, status=500)
 

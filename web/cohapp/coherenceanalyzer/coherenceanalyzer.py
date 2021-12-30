@@ -7,7 +7,6 @@ import subprocess
 from pandas import DataFrame
 import numpy as np
 from pygermanet import load_germanet
-from more_itertools import unique_everseen
 from nltk.stem.snowball import GermanStemmer
 from nltk.tokenize import sent_tokenize
 import itertools

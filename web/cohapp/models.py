@@ -95,7 +95,7 @@ class Subject(models.Model):
     Stores data of user
     """
 
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     experiment = models.ForeignKey(
         'Experiment', verbose_name='Experiment', on_delete=models.CASCADE)
     group = models.PositiveSmallIntegerField(blank=True)
@@ -267,14 +267,14 @@ class TextData(models.Model):
     # leichtgefallen
     g10fu5fb = models.PositiveSmallIntegerField(default=0)
 
-    # Ich konnte mit dem Feedbcak nichts anfangen, weil ich die 
+    # Ich konnte mit dem Feedback nichts anfangen, weil ich die
     # Concept Map nicht verstanden habe.
     g9fu4fb = models.PositiveSmallIntegerField(default=0)
 
     # ********************* Emotionale Erregung Draft ***************************
     # Zufriedenheit/Glück
     emo1_draft = models.PositiveSmallIntegerField(default=0)
-    
+
     # Aufregung / Enthusiasmus
     emo2_draft = models.PositiveSmallIntegerField(default=0)
 
@@ -287,7 +287,7 @@ class TextData(models.Model):
     # ********************* Emotionale Erregung Revision *************************
     # Zufriedenheit/Glück
     g11eda5 = models.PositiveSmallIntegerField(default=0)
-    
+
     # Aufregung / Enthusiasmus
     g12eda6 = models.PositiveSmallIntegerField(default=0)
 
