@@ -11,26 +11,26 @@
 <div class="row" id="login">
   <div class="col s12 m4 offset-m4 log-in-form">
     <form method="post">
-    {% csrf_token %}
-        <h4>Login</h4>
-        <div class="input-field">
-          <input id="username" name="username" type="text" autofocus>
-          <label for="username">Nutzername</label>
-        </div>
+      {% csrf_token %}
+      <h4>Login</h4>
+      <div class="input-field">
+        <input id="username" name="username" type="text" autofocus>
+        <label for="username">Nutzername</label>
+      </div>
 
-        <div class="input-field">
-          <input id="password" name="password" type="password">
-          <label for="password">Passwort</label>
-        </div>
+      <div class="input-field">
+        <input id="password" name="password" type="password">
+        <label for="password">Passwort</label>
+      </div>
 
-        <button type="submit" class="waves-effect waves-light btn">Login</button>
-      </form>
+      <button type="submit" class="waves-effect waves-light btn">Login</button>
+    </form>
   </div>
 </div>
 
 {% endblock %}
 
-{% block endendscripts %}
+{% block endscripts %}{{ block.super }}
 
 {% if invalidlogin %}
 <script>

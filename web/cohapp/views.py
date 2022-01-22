@@ -1,7 +1,7 @@
 # encoding: utf-8
 import csv
+import logging
 import re
-import json
 
 from datetime import datetime
 
@@ -93,12 +93,12 @@ def experiment(request, experiment_password):
     # user = None
 
     # Get user
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         # user = request.user
 
         # Check if experiment exists
         try:
-            experiment = Experiment.objects.get(master_pw=experiment_password)
+            Experiment.objects.get(master_pw=experiment_password)
         except Experiment.DoesNotExist:
             return redirect('dashboard')
 
@@ -115,16 +115,20 @@ def login(request):
 
     # https://docs.djangoproject.com/en/1.8/topics/auth/default/
     # #django.contrib.auth.login
-    # tp://onecreativeblog.com/post/59051248/django-login-required-middleware
+    # http://onecreativeblog.com/post/59051248/django-login-required-middleware
+    context = {
+      "accountdisabled": False,
+      "invalidlogin": False,
+    }
 
     if request.method == "GET":
 
         # User is already logged in
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return redirect('dashboard')
 
         # Render Login Page for Get request
-        return render(request, 'cohapp/login.html')
+        return render(request, 'cohapp/login.html', context)
 
     elif request.method == "POST":
 
@@ -134,10 +138,9 @@ def login(request):
 
         # Write Context variables
         # TODO: Externalize Context variables
-        context = {}
         context['username'] = username
 
-        # Check if user is authenticated in the system
+        # Check if credentials are valid in the system.
         user = authenticate(username=username, password=password)
 
         # User is authenticated
@@ -158,7 +161,7 @@ def login(request):
                 return render(request, 'cohapp/login.html', context)
         # User is not authenticated
         else:
-            context['invalidlogin'] = "test2"
+            context['invalidlogin'] = True
             return render(request, 'cohapp/login.html', context)
 
 
@@ -182,7 +185,7 @@ def login_experiment(request, experiment_password):
     if request.method == "GET":
 
         # User is already logged in
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
 
             # User is staff
             if request.user.is_staff:
@@ -216,6 +219,7 @@ def login_experiment(request, experiment_password):
 
         # Get username
         username = request.POST['username'].lower()
+        logging.info(f"Trying to log into experiment with {username=}")
 
         # Check if username matches regular expression
         pattern = re.compile("^[a-z]{2,4}(0[1-9]|[12]\d|3[01])[a-z]{2,4}[a-z]{2,4}") # New Login
@@ -225,8 +229,7 @@ def login_experiment(request, experiment_password):
         if pattern.match(username):
 
             # Get experiment id
-            experimentId = Experiment.objects.get(
-                master_pw=experiment_password).id
+            experimentId = Experiment.objects.get(master_pw=experiment_password).id
 
             # Authenticate user
             user = authenticate(username=username, password=experiment_password)
@@ -410,7 +413,7 @@ def csv_text_view(request, experiment_password):
                          inst.measurement.measure,
                          inst.submission_date,
                          'draft',
-                         inst.pre_text.replace('\n', '[BREAK]').replace('\r', '[BREAK]').encode('utf-8'),
+                         inst.pre_text.replace('\n', '[BREAK]').replace('\r', '[BREAK]'),
                          inst.pre_num_sentences,
                          inst.pre_num_clusters,
                          inst.pre_num_coherent_sentences,
@@ -473,7 +476,7 @@ def csv_text_view(request, experiment_password):
                          inst.measurement.measure,
                          inst.submission_date,
                          'revision',
-                         inst.post_text.replace('\n', '[BREAK]').replace('\r', '[BREAK]').encode('utf-8'),
+                         inst.post_text.replace('\n', '[BREAK]').replace('\r', '[BREAK]'),
                          inst.post_num_sentences,
                          inst.post_num_clusters,
                          inst.post_num_coherent_sentences,
