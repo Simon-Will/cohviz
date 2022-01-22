@@ -33,7 +33,7 @@ class Experiment(models.Model):
     master_pw = models.CharField(blank=True, max_length=200)
 
     def __str__(self):
-        return (self.name).encode('ascii', errors='replace')
+        return self.name
 
     def save(self, *args, **kwargs):
         """
@@ -84,9 +84,10 @@ class Measurement(models.Model):
     nr_group = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
-        return self.experiment.name + " - " + self.group.abbreviation + \
-            " - Gruppe: " + str(self.nr_group) + \
-            " - Measure: " + str(self.measure)
+        return (
+            f"{self.experiment.name} - {self.group.abbreviation}"
+            f" - Gruppe: {self.nr_group} - Measure: {self.measure}"
+        )
 
 
 class Subject(models.Model):
@@ -104,7 +105,7 @@ class Subject(models.Model):
         verbose_name='Number of Measurements', default=0)
 
     def __str__(self):
-        return self.user.username + " - " + self.experiment.name
+        return f"{self.user.username} - {self.experiment.name}"
 
     def generate_user(self, username, password, experiment_id):
         """
@@ -299,5 +300,4 @@ class TextData(models.Model):
 
 
     def __str__(self):
-        return (self.experiment.name + " " +
-                self.pre_text[:10].encode('ascii', errors='replace'))
+        return f"{self.experiment.name} {self.pre_text[:10]}"
