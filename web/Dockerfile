@@ -23,14 +23,19 @@ WORKDIR /code
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
 	&& apt-get install nodejs=6.14.4-1nodesource1 \
-	&& npm install --global gulp-cli \
+	&& npm install --global bower gulp-cli \
 	&& npm install
+
+COPY bower.json /code/
+RUN bower install --allow-root
 
 RUN wget --no-verbose "https://www.cis.lmu.de/~schmid/tools/RFTagger/data/RFTagger.zip" -O /tmp/RFTagger.zip \
 	&& unzip /tmp/RFTagger.zip -d /code \
 	&& bash -c "cd /code/RFTagger/src && make"
 
 COPY . /code/
+
+RUN gulp bower-files && gulp scripts-vendor && gulp sass && gulp scripts-app && gulp treatment-minify && gulp handlebars && gulp webpack
 
 ENV HOME /code
 ENV RF_TAGGER_ROOT /code/RFTagger
