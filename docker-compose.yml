@@ -3,13 +3,18 @@ services:
   # Cohviz web application
   web:
     build: ./web
-    ports:
-      - '8000:8000'
-    env_file: .env
     volumes:
       - './GN_V110_XML:/code/cohapp/coherenceanalyzer/GN_V110_XML:ro'
       - 'static:/code/static:rw'
       - './cohviz.log:/code/cohviz.log:rw'
+    environment:
+      DB_SERVICE: postgres
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASS: iePh1phahY7aiteengoh
+      DB_PORT: '5432'
+      ALLOWED_HOSTS: 'localhost'
+      CSRF_TRUSTED_ORIGINS: 'http://localhost:8080'
   # Web server
   nginx:
     image: nginx:1.21
