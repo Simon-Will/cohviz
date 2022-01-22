@@ -22,7 +22,7 @@ urlpatterns = [
     path('run-experiment/<experiment_password>', cohviews.run_experiment, name='run_experiment'),
     path('csv_text_export/<experiment_password>', cohviews.csv_text_view, name='csv_text_export'),
 
-    # ************** APIs*********************************************
+    # ************** APIs *********************************************
     path('apis/user-specific/<experiment_password>', apis.UserSpecificView.as_view()),
     path('apis/user-specific-name/<user_name>/<experiment_id>', apis.UserSpecificNameView.as_view()),
     path('apis/user-experiment/<experiment_password>', apis.UserExperimentView.as_view()),
@@ -32,5 +32,6 @@ urlpatterns = [
     path('apis/registration/<user_name>/<experiment_id>', apis.RegistrationView.as_view(), name='registration_view'),
     path('apis/groups/', apis.GroupView.as_view(), name='group_api'),
     path('apis/textanalyzer/', apis.TextAnalyzer.as_view()),
+    path('apis/textanalyzer/<experiment_password>', apis.TextAnalyzer.as_view()),
     path('apis/textdata/<experiment_password>', apis.TextDataView.as_view())
 ]

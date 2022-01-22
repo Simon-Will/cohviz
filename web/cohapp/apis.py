@@ -552,7 +552,7 @@ class TextAnalyzer(APIView):
                               BasicAuthentication)
     permission_classes = (AllowAny, )
 
-    def post(self, request):
+    def post(self, request, experiment_password=None):
 
         # Get text from post data
         text = request.data['text']
