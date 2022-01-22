@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Experiment, Group, Measurement, Subject, TextData
 
+
 @admin.register(Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
     readonly_fields = ('slug', 'nr_measurements', 'nr_groups',
@@ -43,9 +44,9 @@ class TextDataAdmin(admin.ModelAdmin):
                        'cld_revision_question1', 'cld_revision_question2',
                        'cld_revision_question4',
                        'cld_middle_question1', 'cld_middle_question2',
-                       'cld_middle_question4', 
+                       'cld_middle_question4',
                        'g06fu1fb', 'g8fu3fb', 'g07fu2fb',
                        'g10fu5fb', 'g9fu4fb',
-                       'g11eda5', 'g12eda6', 'g13eda7', 
-                       'g14eda8', 'emo1_draft', 'emo2_draft', 
+                       'g11eda5', 'g12eda6', 'g13eda7',
+                       'g14eda8', 'emo1_draft', 'emo2_draft',
                        'emo3_draft', 'emo4_draft')
