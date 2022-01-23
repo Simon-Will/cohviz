@@ -21,7 +21,7 @@ Then start the app (this will take a while the first time you run it because it 
 docker-compose up -d
 ```
 
-Setup a django super user:
+Set up a django super user:
 
 ```
 docker exec -it cohviz_web_1 python3 manage.py createsuperuser
