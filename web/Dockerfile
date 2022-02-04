@@ -35,8 +35,6 @@ RUN wget --no-verbose "https://www.cis.lmu.de/~schmid/tools/RFTagger/data/RFTagg
 
 COPY . /code/
 
-RUN gulp bower-files && gulp scripts-vendor && gulp sass && gulp scripts-app && gulp treatment-minify && gulp handlebars && gulp webpack
-
 ENV HOME /code
 ENV RF_TAGGER_ROOT /code/RFTagger
 
