@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Preloader from '../../preloader.jsx';
 import Instruction from '../instruction.jsx';
 import StaticCmap from './static-cmap.jsx';

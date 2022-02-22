@@ -1,3 +1,5 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {my_urls} from '../jsx-strings.jsx';
 import {getPlainText} from '../helperfunctions.js';
 import Preloader from '../preloader.jsx';
@@ -80,7 +82,6 @@ class Treatment extends React.Component {
     }).then(function(response) {
       return response.json();
     }).then(function(data) {
-      console.log(data);
       self.setState({measurement: data[0],
                      showInstruction: true});
     });

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Preloader from '../../preloader.jsx';
 
 class MeasureIntegrated extends React.Component {

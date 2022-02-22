@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Preloader from '../preloader.jsx';
 import Integrated from './treatments/integrated.jsx';
 import ControlGroup from './treatments/control-group.jsx';

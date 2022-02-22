@@ -1,4 +1,5 @@
 import Preloader from '../preloader.jsx';
+import React from 'react';
 
 class Instruction extends React.Component {
 	constructor(props) {
