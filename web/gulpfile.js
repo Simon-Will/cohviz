@@ -1,10 +1,9 @@
 var gulp = require('gulp');
-var sass = require('gulp-sass');
+var sass = require('gulp-sass')(require("sass"));
 var uglify = require('gulp-uglify');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var eslint = require('gulp-eslint');
-var browserSync = require('browser-sync');
 var mainBowerFiles = require('main-bower-files');
 var filter = require('gulp-filter');
 var $ = require('gulp-load-plugins')({lazy: true});
@@ -22,8 +21,7 @@ var shell = require('gulp-shell');
  * @param  {String} Name of gulp method
  * @return {null}   Nothing
  */
-gulp.task('bower-files', function() {
-
+function taskBowerFiles(done) {
   // Js filter
   const jsFiles = filter('**/*.js');
   const cssFiles = filter('**/*.css');
@@ -39,44 +37,46 @@ gulp.task('bower-files', function() {
   gulp.src(mainBower)
     .pipe(cssFiles)
     .pipe(gulp.dest('./cohapp/static/cohapp/css/vendor/'));
-});
+  done();
+}
 
 /**
  * Concatenate and minify vendor javascript files
  */
-gulp.task('scripts-vendor', function() {
-    gulp.src([
-      // Note: Since we are not using useref in the scripts build pipeline,
-      //       you need to explicitly list your scripts here in the right order
-      //       to be correctly concatenated
-      './cohapp/static/cohapp/js_big/vendor/jquery.js',
-      // './cohapp/static/cohapp/js_big/vendor/jquery-migrate.js',bower
-      './cohapp/static/cohapp/js_big/vendor/typed.min.js',
-      './cohapp/static/cohapp/js_big/vendor/skrollr.js',
-      './cohapp/static/cohapp/js_big/vendor/underscore.js',
-      './cohapp/static/cohapp/js_big/vendor/materialize.js',
-      './cohapp/static/cohapp/js_big/vendor/d3.js',
-      './cohapp/static/cohapp/js_big/vendor/handlebars.js',
-      './cohapp/static/cohapp/js_big/vendor/medium-editor.js',
-      './cohapp/static/cohapp/js_big/vendor/backbone.js',
-      // './cohapp/static/cohapp/js_big/vendor/'
-    ])
-      .pipe($.newer('./cohapp/static/cohapp/js/vendor/'))
-      .pipe($.sourcemaps.init())
-      .pipe($.sourcemaps.write())
-      .pipe($.concat('vendor.js'))
-      .pipe($.uglify({preserveComments: 'some'}))
-      // Output files
-      .pipe($.size({title: 'scripts'}))
-      .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('./cohapp/static/cohapp/js/'))
-      .pipe(gulp.dest('./static/cohapp/js/'));
-});
+function taskScriptsVendor(done) {
+  gulp.src([
+    // Note: Since we are not using useref in the scripts build pipeline,
+    //       you need to explicitly list your scripts here in the right order
+    //       to be correctly concatenated
+    './cohapp/static/cohapp/js_big/vendor/jquery.js',
+    // './cohapp/static/cohapp/js_big/vendor/jquery-migrate.js',bower
+    './cohapp/static/cohapp/js_big/vendor/typed.min.js',
+    './cohapp/static/cohapp/js_big/vendor/skrollr.js',
+    './cohapp/static/cohapp/js_big/vendor/underscore.js',
+    './cohapp/static/cohapp/js_big/vendor/materialize.js',
+    './cohapp/static/cohapp/js_big/vendor/d3.js',
+    './cohapp/static/cohapp/js_big/vendor/handlebars.js',
+    './cohapp/static/cohapp/js_big/vendor/medium-editor.js',
+    './cohapp/static/cohapp/js_big/vendor/backbone.js',
+    // './cohapp/static/cohapp/js_big/vendor/'
+  ])
+    .pipe($.newer('./cohapp/static/cohapp/js/vendor/'))
+    .pipe($.sourcemaps.init())
+    .pipe($.sourcemaps.write())
+    .pipe($.concat('vendor.js'))
+    .pipe($.uglify())
+    // Output files
+    .pipe($.size({title: 'scripts'}))
+    .pipe($.sourcemaps.write('.'))
+    .pipe(gulp.dest('./cohapp/static/cohapp/js/'))
+    .pipe(gulp.dest('./static/cohapp/js/'));
+  done();
+}
 
 /**
  * Build handlebars
  */
-gulp.task('handlebars', function() {
+function taskHandlebars(done) {
   gulp.src('./cohapp/templates/cohapp/handlebars/*.hbs')
     .pipe(handlebars({
       handlebars: require('handlebars')
@@ -91,18 +91,21 @@ gulp.task('handlebars', function() {
     .pipe($.sourcemaps.write('.'))
     .pipe(gulp.dest('./cohapp/static/cohapp/js/', {overwrite: true}))
     .pipe(gulp.dest('./static/cohapp/js/', {overwrite: true}));
-});
+  done();
+}
 
 /**
  * Run webpack command to bundle files
  */
-gulp.task('webpack', shell.task([
-  'webpack']));
+function taskWebpack(done) {
+  shell.task(['webpack']);
+  done();
+}
 
 /**
  * Uglify scripts for app. Write sourcemaps to it
  */
-gulp.task('scripts-app', function() {
+function taskScriptsApp(done) {
 	gulp.src([
       './cohapp/static/cohapp/js_big/app/app.js',
       './cohapp/static/cohapp/js_big/app/models/textanalyzer.js',
@@ -132,12 +135,13 @@ gulp.task('scripts-app', function() {
       .pipe($.sourcemaps.write('.'))
       .pipe(gulp.dest('./cohapp/static/cohapp/js/'))
       .pipe(gulp.dest('./static/cohapp/js/'));
-});
+  done();
+}
 
 /**
  * Minify treatment files
  */
-gulp.task('treatment-minify', function() {
+function taskTreatmentMinify(done) {
   gulp.src('./cohapp/static/cohapp/js_big/app/views/treatments/*.js')
     .pipe($.newer('./cohapp/static/cohapp/js/treatments/*.js'))
     .pipe($.sourcemaps.init())
@@ -146,10 +150,10 @@ gulp.task('treatment-minify', function() {
     .pipe($.sourcemaps.write('.'))
     .pipe(gulp.dest('./cohapp/static/cohapp/js/treatments/'))
     .pipe(gulp.dest('./static/cohapp/js/treatments/'));
-});
+  done();
+}
 
-gulp.task('sass', function() {
-
+function taskSass(done) {
     const AUTOPREFIXER_BROWSERS = [
       'ie >= 10',
       'ie_mob >= 10',
@@ -165,7 +169,7 @@ gulp.task('sass', function() {
     gulp.src('./cohapp/static/cohapp/scss/custom.scss')
         .pipe($.newer('./cohapp/static/cohapp/'))
         .pipe($.sourcemaps.init())
-        .pipe($.sass({precision: 10}).on('error', $.sass.logError))
+        .pipe(sass({precision: 10}).on('error', sass.logError))
         .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
         .pipe($.sourcemaps.write())
         .pipe(gulp.dest('./cohapp/static/cohapp/css'))
@@ -174,45 +178,39 @@ gulp.task('sass', function() {
     gulp.src('./cohapp/static/cohapp/css/**/*.css')
       .pipe(gulp.dest('./static/cohapp/css'));
 
-});
+    done();
+}
 
-gulp.task('lint', function () {
-    // ESLint ignores files with "node_modules" paths.
-    // So, it's best to have gulp ignore the directory as well.
-    // Also, Be sure to return the stream from the task;
-    // Otherwise, the task may end before the stream has finished.
-    return gulp.src('./cohapp/static/cohapp/js_big/app/*.js')
-        // eslint() attaches the lint output to the "eslint" property
-        // of the file object so it can be used by other modules.
-        .pipe(eslint())
-        // eslint.format() outputs the lint results to the console.
-        // Alternatively use eslint.formatEach() (see Docs).
-        .pipe(eslint.format())
-        // To have the process exit with an error code (1) on
-        // lint error, return the stream and pipe to failAfterError last.
-        .pipe(eslint.failAfterError());
-});
+function taskLint(done) {
+  // ESLint ignores files with "node_modules" paths.
+  // So, it's best to have gulp ignore the directory as well.
+  // Also, Be sure to return the stream from the task;
+  // Otherwise, the task may end before the stream has finished.
+  gulp.src('./cohapp/static/cohapp/js_big/app/*.js')
+    // eslint() attaches the lint output to the "eslint" property
+    // of the file object so it can be used by other modules.
+    .pipe(eslint())
+    // eslint.format() outputs the lint results to the console.
+    // Alternatively use eslint.formatEach() (see Docs).
+    .pipe(eslint.format())
+    // To have the process exit with an error code (1) on
+    // lint error, return the stream and pipe to failAfterError last.
+    .pipe(eslint.failAfterError());
+  done();
+}
 
+function taskWatch() {
+	gulp.watch('./cohapp/static/cohapp/scss/**/*.scss', taskSass);
+	gulp.watch('./cohapp/static/cohapp/js_big/app/**/*.js', taskScriptsApp);
+  gulp.watch('./cohapp/static/cohapp/js_big/**/*.jsx', taskWebpack);
+  gulp.watch('./cohapp/static/cohapp/js_big/app/views/treatments/*.js', taskTreatmentMinify);
+  gulp.watch('./cohapp/templates/cohapp/handlebars/*.hbs', taskHandlebars);
+}
 
-gulp.task('watch', ['sass', 'scripts-app'], function() {
-
-    // browserSync({
-    //     logPrefix: 'Coherence App',
-    //     notify: false,
-    //     proxy: 'http://localhost',
-    //     port: 8080,
-
-    //     files: [
-    //         './cohapp/static/cohapp/scss/**/*.scss',
-    //         './cohapp/static/cohapp/js_big/app/*.js',
-    //         './cohapp/templates/cohapp/**/*.html'
-    //     ]
-    // });
-
-	gulp.watch('./cohapp/static/cohapp/scss/**/*.scss', ['sass']);
-	gulp.watch('./cohapp/static/cohapp/js_big/app/**/*.js', ['scripts-app']);
-  gulp.watch('./cohapp/static/cohapp/js_big/**/*.jsx', ['webpack']);
-  gulp.watch('./cohapp/static/cohapp/js_big/app/views/treatments/*.js',
-    ['treatment-minify']);
-  gulp.watch('./cohapp/templates/cohapp/handlebars/*.hbs', ['handlebars']);
-});
+exports.bowerFiles = taskBowerFiles;
+exports.scriptsVendor = taskScriptsVendor;
+exports.sass = taskSass;
+exports.scriptsApp = taskScriptsApp;
+exports.treatmentMinify = taskTreatmentMinify;
+exports.handlebars = taskHandlebars;
+exports.webpack = taskWebpack;

@@ -9,11 +9,11 @@ bash -c 'mongod 2>&1 | tee mongod.log' &
 # If this were in the Dockerfile and the /code/static directory is mounted as a volume, the files in the volume
 # will overwrite what was built in the Dockerfile. By doing it here in the entrypoint, we are overwriting the
 # files in the volume.
-gulp bower-files
-gulp scripts-vendor
+gulp bowerFiles
+gulp scriptsVendor
 gulp sass
-gulp scripts-app
-gulp treatment-minify
+gulp scriptsApp
+gulp treatmentMinify
 gulp handlebars
 gulp webpack
 

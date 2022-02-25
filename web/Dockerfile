@@ -18,12 +18,13 @@ RUN python -m spacy download en_core_web_md
 
 RUN printf "import nltk;\nfor name in ['wordnet', 'omw-1.4', 'punkt']: nltk.download(name, download_dir='/usr/local/nltk_data')" | python
 
-COPY package.json package-lock.json /code/
+COPY package.json /code/
 WORKDIR /code
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-	&& apt-get install nodejs=6.14.4-1nodesource1 \
-	&& npm install --global bower gulp-cli \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+	&& apt-get install nodejs=16.14.0-deb-1nodesource1
+
+RUN npm install --global bower gulp-cli \
 	&& npm install
 
 COPY bower.json /code/
