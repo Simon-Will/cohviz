@@ -24,10 +24,10 @@ WORKDIR /code
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
 	&& apt-get install nodejs=16.14.0-deb-1nodesource1
 
-RUN npm install --global bower gulp-cli \
+RUN npm install --global bower gulp-cli npm \
 	&& npm install
 
-COPY bower.json /code/
+COPY bower.json .bowerrc /code/
 RUN bower install --allow-root
 
 RUN wget --no-verbose "https://www.cis.lmu.de/~schmid/tools/RFTagger/data/RFTagger.zip" -O /tmp/RFTagger.zip \

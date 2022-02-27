@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import {my_urls} from '../jsx-strings.jsx';
 import {getPlainText} from '../helperfunctions.js';
 import Preloader from '../preloader.jsx';
@@ -35,7 +34,7 @@ const TextInput = styled.div`
     height: 90%;
     max-height: 80%;
     overflow-y: scroll;
-    
+
     p {
       font-size: 1.2rem;
     }
@@ -60,7 +59,7 @@ const Render = styled.div`
     font-size: 4rem;
     height: 100%;
     cursor: pointer;
-    
+
     &:hover {
       color: #7c7c7c;
     }
@@ -586,9 +585,7 @@ function mapStatetoProps(store) {
   }
 }
 
-// Connect store to landing page
-// https://github.com/ReactTraining/react-router/issues/4671
-var ConnectedApplication = withRouter(connect(mapStatetoProps)(Application));
+var ConnectedApplication = connect(mapStatetoProps)(Application);
 
 
 export default ConnectedApplication;

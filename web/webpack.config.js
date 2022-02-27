@@ -1,11 +1,15 @@
 const webpack = require('webpack');
 const path = require('path');
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
+  mode: 'production',
+
   entry: {
     treatment: './cohapp/static/cohapp/js_big/components/treatment/treatment.jsx',
     landingpage: './cohapp/static/cohapp/js_big/components/landingpage/landingpage.jsx'
   },
+
   output: {
     path: path.join(__dirname, 'static/cohapp/js'),
     filename: '[name].min.js',
@@ -15,33 +19,26 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        loader: 'babel-loader',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react'
+            ]
+          },
+        },
         include: path.resolve(__dirname, 'cohapp/static/cohapp/js_big'),
         exclude: path.resolve(__dirname, 'node_modules'),
-        options: {
-          babelrc: false,
-          presets: [
-            ['es2015', { modules: false }],
-            'react']
-        }
       }
     ]
   },
 
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
-    }),
-
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      include: /\.min\.js$/,
-      minimize: true,
-      comments: false
-    })
-  ]
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      include: /\.min\.js$/
+    })],
+  },
 };

@@ -15,7 +15,7 @@ gulp sass
 gulp scriptsApp
 gulp treatmentMinify
 gulp handlebars
-gulp webpack
+npx webpack
 
 python manage.py migrate
 python manage.py collectstatic --no-input

@@ -49,16 +49,12 @@ function taskScriptsVendor(done) {
     //       you need to explicitly list your scripts here in the right order
     //       to be correctly concatenated
     './cohapp/static/cohapp/js_big/vendor/jquery.js',
-    // './cohapp/static/cohapp/js_big/vendor/jquery-migrate.js',bower
-    './cohapp/static/cohapp/js_big/vendor/typed.min.js',
-    './cohapp/static/cohapp/js_big/vendor/skrollr.js',
     './cohapp/static/cohapp/js_big/vendor/underscore.js',
     './cohapp/static/cohapp/js_big/vendor/materialize.js',
     './cohapp/static/cohapp/js_big/vendor/d3.js',
     './cohapp/static/cohapp/js_big/vendor/handlebars.js',
     './cohapp/static/cohapp/js_big/vendor/medium-editor.js',
     './cohapp/static/cohapp/js_big/vendor/backbone.js',
-    // './cohapp/static/cohapp/js_big/vendor/'
   ])
     .pipe($.newer('./cohapp/static/cohapp/js/vendor/'))
     .pipe($.sourcemaps.init())
@@ -95,14 +91,6 @@ function taskHandlebars(done) {
 }
 
 /**
- * Run webpack command to bundle files
- */
-function taskWebpack(done) {
-  shell.task(['webpack']);
-  done();
-}
-
-/**
  * Uglify scripts for app. Write sourcemaps to it
  */
 function taskScriptsApp(done) {
@@ -119,11 +107,9 @@ function taskScriptsApp(done) {
       './cohapp/static/cohapp/js_big/app/collections/experiments.js',
       './cohapp/static/cohapp/js_big/app/collections/users.js',
       './cohapp/static/cohapp/js_big/app/collections/measurement.js',
-      './cohapp/static/cohapp/js_big/app/views/landing_view.js',
       './cohapp/static/cohapp/js_big/app/views/login.js',
       './cohapp/static/cohapp/js_big/app/views/dashboard.js',
       './cohapp/static/cohapp/js_big/app/views/experiment.js',
-      './cohapp/static/cohapp/js_big/app/views/new_experiment.js',
       './cohapp/static/cohapp/js_big/app/views/new_experiment.js',
       './cohapp/static/cohapp/js_big/app/views/subject_login.js'
     ])
@@ -213,4 +199,3 @@ exports.sass = taskSass;
 exports.scriptsApp = taskScriptsApp;
 exports.treatmentMinify = taskTreatmentMinify;
 exports.handlebars = taskHandlebars;
-exports.webpack = taskWebpack;

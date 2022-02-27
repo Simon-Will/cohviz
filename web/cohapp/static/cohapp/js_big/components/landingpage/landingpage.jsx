@@ -7,7 +7,7 @@ import Research from './research.jsx';
 import Application from './application.jsx';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter, Route, Switch, NavLink, withRouter } from 'react-router-dom';
+import { HashRouter, Route, Routes, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -46,7 +46,7 @@ const Menu = styled.div`
   .is-active {
     border-bottom: 3px solid #3E5AA7 !important;
   }
-  
+
   .navigation a {
     color: #000;
     font-size: 20px;
@@ -84,12 +84,12 @@ class LandingPage extends React.Component {
             </div>
           </Menu>
 
-          <Switch>
-            <Route path="/about" component={About} />
-            <Route path="/research" component={Research} />
-            <Route path="/contact" component={Contact} />
-            <Route path="/" component={Application} />
-          </Switch>
+          <Routes>
+            <Route path="/about" element={<About />} />
+            <Route path="/research" element={<Research />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/" element={<Application />} />
+          </Routes>
         </App>
     </Container>
     )
@@ -113,9 +113,7 @@ LandingPageStore.subscribe(() => {
   localStorage.setItem('landingpage', JSON.stringify(LandingPageStore.getState()));
 });
 
-// Connect store to landing page
-// https://github.com/ReactTraining/react-router/issues/4671
-var ConnectedLandingPage = withRouter(connect(mapStatetoProps)(LandingPage));
+var ConnectedLandingPage = connect(mapStatetoProps)(LandingPage);
 
 ReactDOM.render(<Provider store={LandingPageStore}>
     <HashRouter basename="/">
