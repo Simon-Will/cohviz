@@ -18,14 +18,14 @@ RUN python -m spacy download en_core_web_md
 
 RUN printf "import nltk;\nfor name in ['wordnet', 'omw-1.4', 'punkt']: nltk.download(name, download_dir='/usr/local/nltk_data')" | python
 
-COPY package.json /code/
-WORKDIR /code
-
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
 	&& apt-get install nodejs=16.14.0-deb-1nodesource1
 
+COPY package.json package-lock.json /code/
+WORKDIR /code
+
 RUN npm install --global bower gulp-cli npm \
-	&& npm install
+	&& npm ci
 
 COPY bower.json .bowerrc /code/
 RUN bower install --allow-root
