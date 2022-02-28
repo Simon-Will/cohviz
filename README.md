@@ -44,7 +44,7 @@ want to host the app at `cohviz.example.com`, set:
 
 ```
 ALLOWED_HOSTS=localhost,cohviz.example.com
-CSRF_TRUSTED_ORIGINS=http://localhost:8080,https://cohviz.gorgor.de
+CSRF_TRUSTED_ORIGINS=http://localhost:8080,https://cohviz.example.com
 ```
 
 Then you can just use another Nginx or Apache as a reverse proxy in front of the
