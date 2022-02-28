@@ -35,6 +35,21 @@ In order to stop the application run
 docker-compose stop
 ```
 
+## How to run in production
+
+The procedure for running Cohviz in production is mostly identical to the steps
+described above. You will need to adjust the environment variables
+`ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` to include your domain. E.g., if you
+want to host the app at `cohviz.example.com`, set:
+
+```
+ALLOWED_HOSTS=localhost,cohviz.example.com
+CSRF_TRUSTED_ORIGINS=http://localhost:8080,https://cohviz.gorgor.de
+```
+
+Then you can just use another Nginx or Apache as a reverse proxy in front of the
+Nginx in the `docker-compose.yml`.
+
 ## License
 
 This project is licensed under the MIT License - see the [license](LICENSE) file for details.
