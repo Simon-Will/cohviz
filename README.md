@@ -35,6 +35,10 @@ In order to stop the application run
 docker-compose stop
 ```
 
+In case you do not want to build the image yourself, you can also use the pre-built image
+[gorgor/cohviz](https://hub.docker.com/r/gorgor/cohviz/tags) available on Docker Hub. To do so, replace the line
+`build: ./web` with `image: gorgor/cohviz:0.1.0` (or a newer version tag if available).
+
 ## How to run in production
 
 The procedure for running Cohviz in production is mostly identical to the steps
